@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application de Gestion d'un Planning Hebdomadaire | Portfolio</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #f59e0b;
+            --accent: #ec4899;
+            --dark: #0f172a;
+            --dark-2: #0a1227;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gray-2: #64748b;
+            --success: #10b981;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow: rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(99, 102, 241, 0.25), transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(236, 72, 153, 0.14), transparent 25%),
+                linear-gradient(180deg, var(--dark) 0%, var(--dark-2) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-wrapper::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 180px 180px;
+            opacity: 0.18;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-1 {
+            width: 260px;
+            height: 260px;
+            top: 10%;
+            left: -5%;
+            background: rgba(99, 102, 241, 0.35);
+        }
+
+        .glow-2 {
+            width: 300px;
+            height: 300px;
+            bottom: 8%;
+            right: 5%;
+            background: rgba(236, 72, 153, 0.16);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.45);
+            color: white;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.75rem 1.4rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-6px);
+            background: rgba(255, 255, 255, 0.13);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: var(--secondary);
+        }
+
+        .hero {
+            padding: 3rem 0 5rem;
+            position: relative;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5rem;
+            gap: 1rem;
+        }
+
+        .brand-mini {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.4rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: white;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.02;
+            letter-spacing: -0.05em;
+            font-weight: 900;
+            max-width: 780px;
+            margin-bottom: 1.5rem;
+        }
+
+        .title span {
+            background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 45%, #fbcfe8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .first-description {
+            font-size: 1.12rem;
+            color: rgba(255, 255, 255, 0.78);
+            max-width: 720px;
+            line-height: 1.9;
+            margin-bottom: 2rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .project-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            min-width: 155px;
+            padding: 1rem 1.2rem;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(14px);
+        }
+
+        .stat-card strong {
+            display: block;
+            color: white;
+            font-size: 1.35rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card span {
+            color: rgba(255, 255, 255, 0.66);
+            font-size: 0.9rem;
+        }
+
+        .hero-preview {
+            position: relative;
+            border-radius: 28px;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.28);
+            overflow: hidden;
+        }
+
+        .hero-preview::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.16), transparent 42%);
+            pointer-events: none;
+        }
+
+        .hero-preview img {
+            width: 100%;
+            height: 360px;
+            object-fit: cover;
+            border-radius: 22px;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .preview-badge {
+            position: absolute;
+            left: 2rem;
+            bottom: 2rem;
+            z-index: 2;
+            padding: 0.75rem 1.2rem;
+            background: rgba(15, 23, 42, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(12px);
+            color: white;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .section {
+            padding: 4rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 1rem;
+            letter-spacing: -0.04em;
+            color: white;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 2rem auto 4rem;
+            font-size: 1.08rem;
+            line-height: 1.8;
+        }
+
+        .main-feature,
+        .feature-item {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+            transition: all 0.35s ease;
+        }
+
+        .main-feature:hover,
+        .feature-item:hover {
+            transform: translateY(-10px);
+            border-color: rgba(99, 102, 241, 0.65);
+            box-shadow: 0 25px 60px rgba(99, 102, 241, 0.22);
+            background: rgba(255, 255, 255, 0.075);
+        }
+
+        .showcase-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 1.3rem;
+            align-items: center;
+        }
+
+        .showcase-image {
+            border-radius: 20px;
+            overflow: hidden;
+            height: 340px;
+            position: relative;
+            background: var(--gradient);
+        }
+
+        .showcase-image::after,
+        .feature-image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(15, 23, 42, 0.35));
+            pointer-events: none;
+        }
+
+        .showcase-image img,
+        .feature-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.45s ease;
+        }
+
+        .main-feature:hover .showcase-image img,
+        .feature-item:hover .feature-image img {
+            transform: scale(1.06);
+        }
+
+        .showcase-details {
+            padding: 1.5rem;
+        }
+
+        .showcase-title,
+        .feature-title {
+            color: white;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .showcase-title {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .showcase-description,
+        .feature-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+        }
+
+        .showcase-description {
+            font-size: 1.08rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .showcase-features,
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .feature-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.09);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            padding: 0.5rem 0.95rem;
+            border-radius: 999px;
+            font-size: 0.86rem;
+            font-weight: 700;
+        }
+
+        .feature-tag::before {
+            content: "✓";
+            color: var(--success);
+            font-weight: 900;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            position: relative;
+        }
+
+        .feature-image {
+            width: 100%;
+            height: 230px;
+            overflow: hidden;
+            position: relative;
+            background: var(--gradient);
+        }
+
+        .feature-content {
+            padding: 1.7rem;
+        }
+
+        .feature-title {
+            font-size: 1.45rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-description {
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .tech-section {
+            padding: 4rem 0 5rem;
+        }
+
+        .tech-card {
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 2rem;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .tech-item {
+            padding: 0.85rem 1.2rem;
+            border-radius: 16px;
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .tech-item i {
+            color: var(--primary);
+        }
+
+        .footer {
+            padding: 3rem 0;
+            text-align: center;
+            color: var(--gray);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 992px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .hero-preview img {
+                height: 320px;
+            }
+
+            .showcase-content {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.3rem;
+            }
+
+            .hero {
+                padding-top: 2rem;
+            }
+
+            .top-bar {
+                align-items: flex-start;
+                flex-direction: column;
+                margin-bottom: 3rem;
+            }
+
+            .title {
+                font-size: 2.45rem;
+            }
+
+            .first-description {
+                font-size: 1rem;
+            }
+
+            .hero-preview img {
+                height: 240px;
+            }
+
+            .showcase-image {
+                height: 230px;
+            }
+
+            .feature-image {
+                height: 210px;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+
+            .stat-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+
+        <header class="hero">
+            <div class="container">
+                <div class="top-bar">
+                    <a href="portfolio.html" class="back-link">
+                        <i class="fas fa-arrow-left"></i>
+                        Retour au Portfolio
+                    </a>
+
+                    <div class="brand-mini">MN</div>
+                </div>
+
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <div class="hero-pill">
+                            <i class="fas fa-calendar-alt"></i>
+                            Projet Web Application
+                        </div>
+
+                        <h1 class="title">
+                            <span>Application de Gestion d'un Planning Hebdomadaire</span>
+                        </h1>
+
+                        <p class="first-description">
+                            Une solution moderne et intuitive pour optimiser la gestion du temps.
+                            L'application permet d'ajouter, consulter, rechercher, sauvegarder et charger un planning
+                            hebdomadaire à travers une interface claire et organisée.
+                        </p>
+
+                        <div class="hero-actions">
+                            <a href="#features" class="btn-primary-custom">
+                                Voir les fonctionnalités
+                                <i class="fas fa-arrow-down"></i>
+                            </a>
+                        </div>
+
+                        <div class="project-stats">
+                            <div class="stat-card">
+                                <strong>8+</strong>
+                                <span>Fonctionnalités</span>
+                            </div>
+                            <div class="stat-card">
+                                <strong>C</strong>
+                                <span>Langage utilisé</span>
+                            </div>
+                            <div class="stat-card">
+                                <strong>100%</strong>
+                                <span>Projet académique</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-preview">
+                        <img src="IMAGES/MENU1.PNG" alt="Interface principale de l'application GPH">
+                        <div class="preview-badge">
+                            <i class="fas fa-desktop"></i>
+                            Interface principale
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section id="features" class="section">
+                <div class="container">
+                    <h2 class="section-title">Fonctionnalités Principales</h2>
+                    <p class="section-subtitle">
+                        Présentation des écrans clés de l'application avec une structure simple,
+                        professionnelle et facile à comprendre.
+                    </p>
+
+                    <div class="main-feature">
+                        <div class="showcase-content">
+                            <div class="showcase-image">
+                                <img src="IMAGES/MENU1.PNG" alt="Interface Principale">
+                            </div>
+
+                            <div class="showcase-details">
+                                <h3 class="showcase-title">Interface Principale</h3>
+                                <p class="showcase-description">
+                                    Tableau de bord clair et intuitif pour visualiser et organiser le planning
+                                    hebdomadaire. L'utilisateur peut accéder rapidement aux principales actions de
+                                    gestion.
+                                </p>
+
+                                <div class="showcase-features">
+                                    <span class="feature-tag">Vue d'ensemble</span>
+                                    <span class="feature-tag">Navigation intuitive</span>
+                                    <span class="feature-tag">Accès rapide</span>
+                                    <span class="feature-tag">Design moderne</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/ajouter.PNG" alt="Ajout de Tâches">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Ajout de Tâches</h3>
+                                <p class="feature-description">
+                                    Ajoutez rapidement de nouvelles tâches avec tous les détails nécessaires.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Formulaire simple</span>
+                                    <span class="feature-tag">Rapide</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/planningesemaine.PNG" alt="Planning de la Semaine">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Planning de la Semaine</h3>
+                                <p class="feature-description">
+                                    Visualisez l'ensemble du planning hebdomadaire, jour par jour.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Vue complète</span>
+                                    <span class="feature-tag">Planification</span>
+                                    <span class="feature-tag">Hebdomadaire</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/planningjour.PNG" alt="Planning d'un Jour">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Planning d'un Jour</h3>
+                                <p class="feature-description">
+                                    Consultez le détail de l'emploi du temps pour chaque journée.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Vue journalière</span>
+                                    <span class="feature-tag">Organisation</span>
+                                    <span class="feature-tag">Planning</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/recherchemote.PNG" alt="Recherche par Mot-clé">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Recherche par Mot-clé</h3>
+                                <p class="feature-description">
+                                    Retrouvez rapidement vos tâches en recherchant des mots-clés dans leur description.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Recherche</span>
+                                    <span class="feature-tag">Filtrage</span>
+                                    <span class="feature-tag">Mots-clés</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/recherchejour.PNG" alt="Recherche par Jour">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Recherche par Jour</h3>
+                                <p class="feature-description">
+                                    Accédez facilement à toutes les tâches programmées pour un jour spécifique.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Date</span>
+                                    <span class="feature-tag">Recherche</span>
+                                    <span class="feature-tag">Filtrage</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/supprimer.PNG" alt="Supprimer une Tâche">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Supprimer une Tâche</h3>
+                                <p class="feature-description">
+                                    Supprimez facilement les tâches obsolètes ou annulées de votre planning.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Suppression</span>
+                                    <span class="feature-tag">Gestion</span>
+                                    <span class="feature-tag">Sécurité</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/sauvgarder.PNG" alt="Sauvegarder le Planning">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Sauvegarder le Planning</h3>
+                                <p class="feature-description">
+                                    Enregistrez le planning complet dans un fichier pour le conserver ou le transférer.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Sauvegarde</span>
+                                    <span class="feature-tag">Export</span>
+                                    <span class="feature-tag">Sécurité</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-image">
+                                <img src="IMAGES/cahrger.PNG" alt="Charger le Planning">
+                            </div>
+                            <div class="feature-content">
+                                <h3 class="feature-title">Charger le Planning</h3>
+                                <p class="feature-description">
+                                    Importez un planning sauvegardé pour restaurer les données ou les transférer entre
+                                    appareils.
+                                </p>
+                                <div class="feature-tags">
+                                    <span class="feature-tag">Import</span>
+                                    <span class="feature-tag">Restauration</span>
+                                    <span class="feature-tag">Données</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tech-section">
+                <div class="container">
+                    <h2 class="section-title">Technologies Utilisées</h2>
+                    <p class="section-subtitle">
+                        Les outils et compétences utilisés pour réaliser ce projet.
+                    </p>
+
+                    <div class="tech-card">
+                        <div class="tech-item">
+                            <i class="fas fa-code"></i>
+                            Langage C
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            Gestion Planning
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-search"></i>
+                            Recherche
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-save"></i>
+                            Sauvegarde
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-folder-open"></i>
+                            Chargement
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Mourad Nourti. Projet intégré au portfolio.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
