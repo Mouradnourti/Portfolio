@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Collections</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #f97316;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --bg-dark: #1e293b;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .back-btn {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.85rem 1.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 1000;
+        }
+
+        .back-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .back-btn:hover i {
+            transform: translateX(-3px);
+        }
+
+        .collection-header {
+            padding: 12rem 0 8rem;
+            background-color: var(--bg-dark);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+
+        .collection-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(14, 165, 233, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 50% 70%, rgba(249, 115, 22, 0.4) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .collection-header .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .collection-title {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, var(--white), var(--gray-200));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .collection-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .collection-description {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 2rem auto 0;
+            opacity: 0.9;
+            line-height: 1.8;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+
+        .collection-grid {
+            padding: 4rem 0;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            transform: translateY(0);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-image {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            height: 100%;
+        }
+
+        .product-link:hover {
+            text-decoration: none;
+        }
+
+        .product-button {
+            z-index: 2;
+        }
+
+        .add-to-cart {
+            background: var(--white);
+            border: none;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-dark);
+            font-size: 1rem;
+            box-shadow: var(--shadow-md);
+            transform: scale(1);
+        }
+
+        .add-to-cart:hover {
+            transform: scale(1.1);
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .add-to-cart:active {
+            transform: scale(0.95);
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 0.5rem;
+        }
+
+
+        .add-to-cart.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+
+        .add-to-cart:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+
+        @media (max-width: 768px) {
+            .add-to-cart {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            .collection-title {
+                font-size: 2.5rem;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="collection-header">
+        <div class="container">
+            <a href="projetdemo.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Store
+            </a>
+            <h1 class="collection-title">Adidas Originals</h1>
+            <p class="collection-description">Discover our extensive range of Adidas products, from classic sneakers to
+                modern athletic wear.</p>
+        </div>
+    </section>
+
+
+    <section class="collection-grid">
+        <div class="container">
+            <div class="products-grid">
+
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="IMAGES/shoes2.jpg" alt="Adidas Ultraboost 22">
+                            <div class="product-button"> <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas Ultraboost 22</h3>
+                            <div class="product-category">Running Shoes</div>
+                            <div class="product-price">$189.99</div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="images/shoes2.jpg" alt="Adidas NMD R1">
+                            <div class="product-button">
+                                <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas NMD R1</h3>
+                            <div class="product-category">Lifestyle Sneakers</div>
+                            <div class="product-price">$159.99</div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="images/SHOES3.jpg" alt="Adidas Predator Edge">
+                            <div class="product-button">
+                                <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas Predator Edge</h3>
+                            <div class="product-category">Soccer Cleats</div>
+                            <div class="product-price">$199.99</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="images/SHOES4.avif" alt="Adidas Forum Low">
+                            <div class="product-button">
+                                <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas Forum Low</h3>
+                            <div class="product-category">Casual Sneakers</div>
+                            <div class="product-price">$129.99</div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="images/SOCCER.avif" alt="Adidas Superstar">
+                            <div class="product-button">
+                                <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas Superstar</h3>
+                            <div class="product-category">Classic Sneakers</div>
+                            <div class="product-price">$99.99</div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="images/SHOES3.jpg" alt="Adidas ZX 750">
+                            <div class="product-button">
+                                <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas ZX 750</h3>
+                            <div class="product-category">Retro Running</div>
+                            <div class="product-price">$139.99</div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="images/SHOES3.jpg" alt="Adidas Gazelle">
+                            <div class="product-button">
+                                <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas Gazelle</h3>
+                            <div class="product-category">Lifestyle Sneakers</div>
+                            <div class="product-price">$89.99</div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="product-card">
+                    <a href="product1.html" class="product-link">
+                        <div class="product-image">
+                            <img src="images/SOCCER.avif" alt="Adidas Stan Smith">
+                            <div class="product-button">
+                                <button class="add-to-cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">Adidas Stan Smith</h3>
+                            <div class="product-category">Classic Sneakers</div>
+                            <div class="product-price">$94.99</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+</body>
+
+</html>
